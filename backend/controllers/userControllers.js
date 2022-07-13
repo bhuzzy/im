@@ -1,7 +1,6 @@
 const asyncHandler = require('express-async-handler');
 const bcrypt = require('bcryptjs');
-const jwt = require('jsonwebtoken')
-
+const jwt = require('jsonwebtoken');
 
 const User = require('../models/userModel');
 
@@ -48,37 +47,44 @@ const registerUser = asyncHandler(async (req, res) => {
 });
 
 const loginUser = asyncHandler(async (req, res) => {
-    const {email, password} = req.body
+  const { email, password } = req.body;
 
-    const user = await User.findOne({email})
+  const user = await User.findOne({ email });
 
-    if (user && await (bcrypt.compare(password, user.password))) {
-        res.status(201).json({
-            _id: user._id,
-            name: user.name,
-            email: user.email,
-            token: generateToken(user._id),
-          });
-        } else {
-          res.status(400);
-          throw new Error('Invalid crediantials');
-        }
-    }); 
+  if (user && (await bcrypt.compare(password, user.password))) {
+    res.status(201).json({
+      _id: user._id,
+      name: user.name,
+      email: user.email,
+      token: generateToken(user._id),
+    });
+  } else {
+    res.status(400);
+    throw new Error('Invalid crediantials');
+  }
+});
 
-    const generateToken = (id) => {
-        return jwt.sign({id}, process.env.JWT_SECRET, {
-            expiresIn: '30d',
-        })
-    }
+const generateToken = (id) => {
+  return jwt.sign({ id }, process.env.JWT_SECRET, {
+    expiresIn: '30d',
+  });
+};
 
-    // GET ME
+// GET ME
 
-    const getMe = asyncHandler(async (req, res) => {
-        res.send('me')
-    })
+const getMe = asyncHandler(async (req, res) => {
+  res.send('me');
+});
+
+const getUsers = asyncHandler(async (req, res) => {
+  const users = await User.find({}).select('name');
+
+  res.send(users);
+});
 
 module.exports = {
   registerUser,
   loginUser,
   getMe,
+  getUsers,
 };
