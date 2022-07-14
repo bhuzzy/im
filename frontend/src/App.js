@@ -10,6 +10,7 @@ import NewTicket from './pages/NewTicket';
 import Tickets from './pages/Tickets';
 import Ticket from './pages/Ticket';
 import Chat from './pages/Chat';
+import Chatpage from './pages/Chatpage';
 
 function App() {
   return (
@@ -21,6 +22,7 @@ function App() {
             <Route path='/' element={<Home />} />
             <Route path='/login' element={<Login />} />
             <Route path='/chat' element={<Chat />} />
+            <Route path='/chatpage' element={<Chatpage />} />
             <Route path='/register' element={<Register />} />
             <Route path='/new-ticket' element={<PrivateRoute />}>
               <Route path='/new-ticket' element={<NewTicket />} />

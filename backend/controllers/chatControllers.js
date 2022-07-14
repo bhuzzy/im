@@ -73,6 +73,26 @@ const fetchChats = asyncHandler(async (req, res) => {
   }
 });
 
+const getAllChats = asyncHandler(async (req, res) => {
+  try {
+    const allUsers = await Chat.find({})
+      .populate('users', '-password')
+      .populate('groupAdmin', '-password')
+      .populate('latestMessage')
+      .sort({ updatedAt: -1 })
+      .then(async (results) => {
+        results = await User.populate(results, {
+          path: 'latestMessage.sender',
+          select: 'name pic email',
+        });
+        res.status(200).send(results);
+      });
+  } catch (error) {
+    res.status(400);
+    throw new Error(error.message);
+  }
+});
+
 //@description     Create New Group Chat
 //@route           POST /api/chat/group
 //@access          Protected
@@ -195,6 +215,7 @@ const addToGroup = asyncHandler(async (req, res) => {
 module.exports = {
   accessChat,
   fetchChats,
+  getAllChats,
   createGroupChat,
   renameGroup,
   addToGroup,
