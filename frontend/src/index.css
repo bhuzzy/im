@@ -46,13 +46,17 @@ h3 {
 .left {
   width: 25%;
   text-align: left;
-  background-color: rgb(56, 207, 207);
+  background-color: rgb(206, 231, 231);
   margin-bottom: 10px;
+  display: inline-block;
+  float: left;
+  
 }
 
 .right {
-  width: 75%;
-  background-color: rgb(236, 197, 197);
+  width: 100%;
+  background-color: rgb(216, 214, 214);
+  
 }
 
 .header {

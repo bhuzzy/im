@@ -33,25 +33,22 @@ function Chatpage() {
 
   return (
     <>
-      {chats.map((chat) => {
-        return (
-          <div
-            className='left'
-            onClick={() => getMessages(chat._id)}
-            key={chat._id}
-          >
-            {chat.latestMessage.sender.name} <br></br>
-            {chat.latestMessage.content}
-          </div>
-        );
-      })}
-      {messages.map((message) => {
-        return (
-          <div className='right' key={message._id}>
-            {message.content}
-          </div>
-        );
-      })}
+      <div className='left'>
+        {chats.map((chat) => {
+          return (
+            <div onClick={() => getMessages(chat._id)} key={chat._id}>
+              {chat.latestMessage.sender.name} <br></br>
+              {chat.latestMessage.content}
+            </div>
+          );
+        })}
+      </div>
+
+      <div className='right'>
+        {messages.map((message) => {
+          return <div key={message._id}>{message.content}</div>;
+        })}
+      </div>
     </>
   );
 }
