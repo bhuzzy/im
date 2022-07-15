@@ -13,6 +13,7 @@ function Chatpage() {
   };
 
   const [chats, setChats] = useState([]);
+  const [text, setText] = useState('');
 
   const [messages, setMessages] = useState([]);
 
@@ -23,12 +24,15 @@ function Chatpage() {
     });
   }, []);
 
-  useEffect(() => {});
-
   const getMessages = async (id) => {
     const { data } = await axios.get(`api/message/${id}`, config);
     console.log(data);
     setMessages(data);
+  };
+
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    alert(`The name you entered was: ${text}`);
   };
 
   return (
@@ -48,6 +52,16 @@ function Chatpage() {
         {messages.map((message) => {
           return <div key={message._id}>{message.content}</div>;
         })}
+        <form onSubmit={handleSubmit}>
+          <label>
+            <input
+              type='text'
+              value={text}
+              onChange={(e) => setText(e.target.value)}
+            />
+          </label>
+          <input type='submit' />
+        </form>
       </div>
     </>
   );
