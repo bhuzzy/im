@@ -43,6 +43,13 @@ h3 {
   text-align: center;
 }
 
+.left {
+  width: 25%;
+  text-align: left;
+  background-color: rgb(56, 207, 207);
+  margin-bottom: 10px;
+}
+
 .header {
   display: flex;
   justify-content: space-between;
