@@ -4,6 +4,8 @@ import React, { useEffect, useState } from 'react';
 function Chatpage() {
   const user = JSON.parse(localStorage.getItem('user'));
 
+  const userId = user._id;
+
   const token = user.token;
 
   const config = {
@@ -14,6 +16,7 @@ function Chatpage() {
 
   const [chats, setChats] = useState([]);
   const [text, setText] = useState('');
+  const [selectedChat, setSelectedChat] = useState('');
 
   const [messages, setMessages] = useState([]);
 
@@ -30,9 +33,19 @@ function Chatpage() {
     setMessages(data);
   };
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
-    alert(`The name you entered was: ${text}`);
+    const { data } = await axios.post(
+      'api/message/',
+      {
+        content: text,
+        chatId: selectedChat,
+      },
+      config
+    );
+    setText('');
+
+    setMessages([...messages, data]);
   };
 
   return (
@@ -40,7 +53,13 @@ function Chatpage() {
       <div className='left'>
         {chats.map((chat) => {
           return (
-            <div onClick={() => getMessages(chat._id)} key={chat._id}>
+            <div
+              onClick={() => {
+                getMessages(chat._id);
+                setSelectedChat(chat._id);
+              }}
+              key={chat._id}
+            >
               {chat.latestMessage.sender.name} <br></br>
               {chat.latestMessage.content}
             </div>
@@ -50,11 +69,21 @@ function Chatpage() {
 
       <div className='right'>
         {messages.map((message) => {
-          return <div key={message._id}>{message.content}</div>;
+          return (
+            <div
+              className={`${
+                userId === message.sender._id ? 'messageright' : 'messageleft'
+              }`}
+              key={message._id}
+            >
+              <span>{message.content}</span>
+            </div>
+          );
         })}
-        <form onSubmit={handleSubmit}>
+        <form className='typemessageform' onSubmit={handleSubmit}>
           <label>
             <input
+              className='typemessageinput'
               type='text'
               value={text}
               onChange={(e) => setText(e.target.value)}

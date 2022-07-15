@@ -6,6 +6,10 @@
   box-sizing: border-box;
 }
 
+html {
+  height: 100vh;
+}
+
 body {
   font-family: 'Poppins', sans-serif;
   height: 100vh;
@@ -48,14 +52,53 @@ h3 {
   text-align: left;
   background-color: rgb(206, 231, 231);
   margin-bottom: 10px;
-  display: inline-block;
+  
   float: left;
   
 }
 
 .right {
-  width: 100%;
+  width: 75%;
+  height: 50vh;
   background-color: rgb(216, 214, 214);
+  display: inline-block;
+  overflow:auto;
+  
+  
+}
+
+
+
+.messageright {
+  text-align: right;
+  margin: 10px 10px;
+}
+
+.messageright > span {
+  
+  background-color: rgb(188, 188, 255);
+  margin: 10px 10px;
+  padding: 5px;
+}
+
+.messageleft {
+  text-align: left;
+  margin: 10px 10px;
+}
+.messageleft > span {
+  
+  background-color: rgb(194, 255, 194);
+  margin: 10px 10px;
+  padding: 5px;
+}
+
+
+
+
+.typemessageinput {
+  
+  margin-top: 50px;
+  width: 90%;
   
 }
 
@@ -149,7 +192,7 @@ h3 {
 .form-group label {
   text-align: left;
   display: block;
-  margin: 0 0 5px 3px;
+  margin: 0 10 5px 3px;
 }
 
 .btn {

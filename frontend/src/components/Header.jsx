@@ -24,7 +24,7 @@ function Header() {
         {user ? (
           <>
             <li>
-              <Link to='chat'>
+              <Link to='chatpage'>
                 <AiOutlineMessage />
               </Link>
             </li>
