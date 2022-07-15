@@ -46,7 +46,11 @@ function Chatpage() {
         );
       })}
       {messages.map((message) => {
-        return <div key={message._id}>{message.content}</div>;
+        return (
+          <div className='right' key={message._id}>
+            {message.content}
+          </div>
+        );
       })}
     </>
   );
