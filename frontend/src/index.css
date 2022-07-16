@@ -13,6 +13,7 @@ html {
 body {
   font-family: 'Poppins', sans-serif;
   height: 100vh;
+  
 }
 
 a {
@@ -648,5 +649,17 @@ footer {
 
   .heading p {
     font-size: 1.5rem;
+  }
+
+  .sidebar {
+    flex: 1;
+  }
+
+  .chat {
+    flex: 1;
+  }
+
+  .hide{
+    display: none;
   }
 }

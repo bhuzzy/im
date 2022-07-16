@@ -3,6 +3,8 @@ import React, { useEffect, useRef, useState } from 'react';
 import { Avatar, IconButton } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
 import RateReviewOutlinedIcon from '@mui/icons-material/RateReviewOutlined';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import Spinner from '../components/Spinner';
 
 function Chatpage() {
   const messagesEndRef = useRef(null);
@@ -29,7 +31,7 @@ function Chatpage() {
       setChats(response.data);
       //console.log(response.data);
     });
-  }, []);
+  }, [messages]);
 
   useEffect(() => {
     scrollToBottom();
@@ -59,6 +61,11 @@ function Chatpage() {
     }
   };
 
+  const boo = () => {
+    setSelectedChat('');
+    setMessages([]);
+  };
+
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'auto' });
   };
@@ -66,7 +73,9 @@ function Chatpage() {
   return (
     <>
       <div className='app'>
-        <div className='sidebar'>
+        <div
+          className={`sidebar ${selectedChat.trim().length !== 0 && 'hide'}`}
+        >
           <div className='sidebar__header'>
             <Avatar className='sidebar__avatar' />
 
@@ -107,8 +116,9 @@ function Chatpage() {
           </div>
         </div>
 
-        <div className='chat'>
+        <div className={`chat ${selectedChat.trim().length === 0 && 'hide'}`}>
           <div className='chat__header'>
+            <ArrowBackIcon onClick={boo} />
             <h4>
               To: <span className='chat__name'>Channel name</span>
             </h4>
