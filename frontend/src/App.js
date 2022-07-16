@@ -11,6 +11,7 @@ import Tickets from './pages/Tickets';
 import Ticket from './pages/Ticket';
 import Chat from './pages/Chat';
 import Chatpage from './pages/Chatpage';
+import Test from './pages/Test';
 
 function App() {
   return (
@@ -23,6 +24,7 @@ function App() {
             <Route path='/login' element={<Login />} />
             <Route path='/chat' element={<Chat />} />
             <Route path='/chatpage' element={<Chatpage />} />
+            <Route path='/test' element={<Test />} />
             <Route path='/register' element={<Register />} />
             <Route path='/new-ticket' element={<PrivateRoute />}>
               <Route path='/new-ticket' element={<NewTicket />} />
