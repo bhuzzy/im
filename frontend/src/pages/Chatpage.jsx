@@ -80,49 +80,68 @@ function Chatpage() {
             </IconButton>
           </div>
 
-          {chats.map((chat) => {
-            return (
-              <div
-                onClick={() => {
-                  getMessages(chat._id);
-                  setSelectedChat(chat._id);
-                }}
-                key={chat._id}
-              >
-                {chat.latestMessage.sender.name} <br></br>
-                {chat.latestMessage.content.length > 50
-                  ? chat.latestMessage.content.substring(0, 51) + '...'
-                  : chat.latestMessage.content}
-              </div>
-            );
-          })}
+          <div className='sidebar__chats'>
+            {chats.map((chat) => {
+              return (
+                <div
+                  className='sidebarChat'
+                  onClick={() => {
+                    getMessages(chat._id);
+                    setSelectedChat(chat._id);
+                  }}
+                  key={chat._id}
+                >
+                  <Avatar />
+                  <div className='sidebarChat__info'>
+                    <h3>{chat.latestMessage.sender.name} </h3>
+                    <p>
+                      {chat.latestMessage.content.length > 25
+                        ? chat.latestMessage.content.substring(0, 26) + '...'
+                        : chat.latestMessage.content}
+                    </p>
+                    <small>{chat.updatedAt.substring(12, 19)}</small>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
         </div>
 
-        <div className='right'>
-          {messages.map((message) => {
-            return (
-              <div
-                className={`${
-                  userId === message.sender._id ? 'messageright' : 'messageleft'
-                }`}
-                key={message._id}
-              >
-                <p>{message.content}</p>
-              </div>
-            );
-          })}
-          <form className='typemessageform' onSubmit={handleSubmit}>
-            <label>
+        <div className='chat'>
+          <div className='chat__header'>
+            <h4>
+              To: <span className='chat__name'>Channel name</span>
+            </h4>
+            <strong>Details</strong>
+          </div>
+          <div className='chat__messages'>
+            {messages.map((message) => {
+              return (
+                <div
+                  className={`message ${
+                    userId === message.sender._id
+                      ? 'messageright'
+                      : 'messageleft'
+                  }`}
+                  key={message._id}
+                >
+                  <p>{message.content}</p>
+                </div>
+              );
+            })}
+            <span style={{ marginBottom: 0 }} ref={messagesEndRef} />
+          </div>
+          <div className='chat__input'>
+            <form>
               <input
-                className='typemessageinput'
+                placeholder='message'
                 type='text'
                 value={text}
                 onChange={(e) => setText(e.target.value)}
               />
-            </label>
-            <input type='submit' />
-          </form>
-          <span style={{ marginBottom: 100 }} ref={messagesEndRef} />
+              <button onClick={handleSubmit}>Send Message</button>
+            </form>
+          </div>
         </div>
       </div>
     </>
