@@ -119,13 +119,13 @@ function Chatpage() {
               return (
                 <div
                   className={`message ${
-                    userId === message.sender._id
-                      ? 'messageright'
-                      : 'messageleft'
+                    userId === message.sender._id && 'message__sender'
                   }`}
                   key={message._id}
                 >
+                  <Avatar className='message__photo' />
                   <p>{message.content}</p>
+                  <small>{message.updatedAt}</small>
                 </div>
               );
             })}
