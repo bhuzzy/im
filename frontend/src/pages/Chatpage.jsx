@@ -4,7 +4,7 @@ import { Avatar, IconButton } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
 import RateReviewOutlinedIcon from '@mui/icons-material/RateReviewOutlined';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-import Spinner from '../components/Spinner';
+//import Spinner from '../components/Spinner';
 
 function Chatpage() {
   const messagesEndRef = useRef(null);
@@ -27,7 +27,7 @@ function Chatpage() {
   const [messages, setMessages] = useState([]);
 
   useEffect(() => {
-    axios.get('api/chat/all').then((response) => {
+    axios.get('api/chat/', config).then((response) => {
       setChats(response.data);
       //console.log(response.data);
     });
@@ -70,6 +70,46 @@ function Chatpage() {
     messagesEndRef.current?.scrollIntoView({ behavior: 'auto' });
   };
 
+  /*const userslist = chats.map(({ users }) => ({
+    name: user.name,
+  }));
+
+  console.log(userslist);*/
+
+  //console.log(chats);
+
+  const usersmapped = chats.map((chat) =>
+    chat.users.map((user) => {
+      if (userId !== user._id) {
+        return user.name;
+      }
+    })
+  );
+
+  // const usersmapped = chats.map((chat) =>
+  //   chat.users.map((user) => {
+  //     return user._id === userId ? 'yes' : user.name;
+  //   })
+  // );
+
+  //const usermapped = usersmapped.map((user) => user);
+
+  console.log(usersmapped);
+
+  // const usermapped = usersmapped[0];
+
+  // const checkid = (age) => {
+  //   return age === userId;
+  // };
+
+  // const filtered = usersmapped.filter(checkid);
+
+  //console.log(filtered);
+  //console.log(usersmapped[0]);
+  //console.log();
+
+  //console.log(usermapped);
+
   return (
     <>
       <div className='app'>
@@ -91,6 +131,7 @@ function Chatpage() {
 
           <div className='sidebar__chats'>
             {chats.map((chat) => {
+              //console.log(chat);
               return (
                 <div
                   className='sidebarChat'
@@ -101,8 +142,13 @@ function Chatpage() {
                   key={chat._id}
                 >
                   <Avatar />
+
                   <div className='sidebarChat__info'>
-                    <h3>{chat.latestMessage.sender.name} </h3>
+                    <h3>
+                      {chat.users.map(
+                        (user) => user._id !== userId && user.name + ' '
+                      )}
+                    </h3>
                     <p>
                       {chat.latestMessage.content.length > 25
                         ? chat.latestMessage.content.substring(0, 26) + '...'

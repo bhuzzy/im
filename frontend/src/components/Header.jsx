@@ -3,11 +3,13 @@ import { AiOutlineMessage } from 'react-icons/ai';
 import { Link, useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { logout, reset } from '../features/auth/authSlice';
+import { useState } from 'react';
 
 function Header() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { user } = useSelector((state) => state.auth);
+  const [text, setText] = useState([]);
 
   const onLogout = () => {
     dispatch(logout());
@@ -15,10 +17,25 @@ function Header() {
     navigate('/');
   };
 
+  const handleSubmit = (e) => {
+    e.preventDefault();
+  };
+
   return (
     <header className='header'>
       <div className='logo'>
         <Link to='/'>Paper.chat</Link>
+      </div>
+      <div className='header__input'>
+        <form>
+          <input
+            placeholder=''
+            type='text'
+            value={text}
+            onChange={(e) => setText(e.target.value)}
+          />
+          <button onClick={handleSubmit}>Search</button>
+        </form>
       </div>
       <ul>
         {user ? (
