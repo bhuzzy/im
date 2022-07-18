@@ -83,6 +83,15 @@ function Chat() {
   //   } while (data);
   //   return pubId;
   // };
+
+  // const usersmapped = chats.map((chat) =>
+  //   chat.users.map((user) => {
+  //     if (userId !== user._id) {
+  //       return user.name;
+  //     }
+  //   })
+  // );
+
   return (
     <>
       <p> hello </p>

@@ -27,6 +27,7 @@ function Chatpage() {
   const [chats, setChats] = useState([]);
   const [text, setText] = useState('');
   const [selectedChat, setSelectedChat] = useState('');
+  const [chatInfo, setChatInfo] = useState([]);
   const [names, setNames] = useState([]);
   const [socketConnected, setSocketConnected] = useState(false);
 
@@ -46,31 +47,18 @@ function Chatpage() {
   }, []);
 
   useEffect(() => {
-    socket.on('message recieved', (newMessageRecieved) => {
-      if (
-        !selectedChatCompare ||
-        selectedChatCompare !== newMessageRecieved.chat._id
-      ) {
-        // give notification
-      } else {
-        setMessages([...messages, newMessageRecieved]);
-      }
-    });
-  });
+    getMessages(chatInfo._id);
 
-  useEffect(() => {
-    getMessages(selectedChat);
-
-    selectedChatCompare = selectedChat;
+    selectedChatCompare = chatInfo;
     // eslint-disable-next-line
-  }, [selectedChat]);
+  }, [chatInfo]);
 
   const getMessages = async (id) => {
     if (!selectedChat) return;
     const { data } = await axios.get(`api/message/${id}`, config);
 
     setMessages(data);
-    socket.emit('join chat', selectedChat);
+    socket.emit('join chat', chatInfo._id);
   };
 
   const handleSubmit = async (event) => {
@@ -87,8 +75,6 @@ function Chatpage() {
       );
       setText('');
 
-      socket.emit('new message', data);
-
       setMessages([...messages, data]);
     }
   };
@@ -101,14 +87,6 @@ function Chatpage() {
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'auto' });
   };
-
-  const usersmapped = chats.map((chat) =>
-    chat.users.map((user) => {
-      if (userId !== user._id) {
-        return user.name;
-      }
-    })
-  );
 
   return (
     <>
@@ -136,6 +114,8 @@ function Chatpage() {
                   className='sidebarChat'
                   onClick={() => {
                     setSelectedChat(chat._id);
+                    setChatInfo(chat);
+                    console.log(chat);
                   }}
                   key={chat._id}
                 >
