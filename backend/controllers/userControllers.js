@@ -1,11 +1,12 @@
 const asyncHandler = require('express-async-handler');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const { nanoid } = require('nanoid');
 
 const User = require('../models/userModel');
 
 const registerUser = asyncHandler(async (req, res) => {
-  const { name, email, password } = req.body;
+  const { name, email, password, pubId } = req.body;
 
   // validation
   if (!name || !email || !password) {
@@ -16,10 +17,20 @@ const registerUser = asyncHandler(async (req, res) => {
   // find if user already exists
   const userExists = await User.findOne({ email });
 
+  // find if user already exists
+  const pubIdExists = await User.findOne({ pubId });
+
   if (userExists) {
     res.status(400);
     throw new Error('User already exists');
   }
+  if (pubIdExists) {
+    res.status(400);
+    throw new Error('User already exists');
+  }
+
+  const pubId2 = nanoid();
+  console.log(pubIb2);
 
   // hash password
 
@@ -30,6 +41,8 @@ const registerUser = asyncHandler(async (req, res) => {
   const user = await User.create({
     name,
     email,
+    pubId,
+    pubId2,
     password: hashedPassword,
   });
 
@@ -76,6 +89,8 @@ const getMe = asyncHandler(async (req, res) => {
   res.send('me');
 });
 
+// checks if signed in
+
 const getUsers = asyncHandler(async (req, res) => {
   const keyword = req.query.search
     ? {
@@ -90,9 +105,30 @@ const getUsers = asyncHandler(async (req, res) => {
   res.send(users);
 });
 
+// doesn't check if signed in.
+
+const findUsers = asyncHandler(async (req, res) => {
+  const keyword = req.params.searchWord
+    ? {
+        $or: [{ name: { $regex: req.params.searchWord, $options: 'i' } }],
+      }
+    : {};
+
+  const users = await User.find(keyword);
+
+  res.send(users);
+});
+
+const checkPub = asyncHandler(async (req, res) => {
+  const pub = await User.find({ pubId: req.params.pubId });
+  res.send(pub);
+});
+
 module.exports = {
   registerUser,
   loginUser,
   getMe,
   getUsers,
+  findUsers,
+  checkPub,
 };

@@ -15,6 +15,14 @@ const userSchema = mongoose.Schema(
       type: String,
       required: [true, 'Please add a password'],
     },
+    pubId: {
+      type: String,
+      unique: true,
+    },
+    pubId2: {
+      type: String,
+      unique: true,
+    },
     pic: {
       type: 'String',
       required: true,

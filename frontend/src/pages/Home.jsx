@@ -1,5 +1,5 @@
-import { Link } from 'react-router-dom'
-import { FaQuestionCircle, FaTicketAlt } from 'react-icons/fa'
+import { Link } from 'react-router-dom';
+import { FaQuestionCircle, FaTicketAlt } from 'react-icons/fa';
 
 function Home() {
   return (
@@ -17,7 +17,7 @@ function Home() {
         <FaTicketAlt /> View My Tickets
       </Link>
     </>
-  )
+  );
 }
 
-export default Home
+export default Home;

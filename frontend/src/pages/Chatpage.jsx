@@ -23,13 +23,13 @@ function Chatpage() {
   const [chats, setChats] = useState([]);
   const [text, setText] = useState('');
   const [selectedChat, setSelectedChat] = useState('');
+  const [names, setNames] = useState([]);
 
   const [messages, setMessages] = useState([]);
 
   useEffect(() => {
     axios.get('api/chat/', config).then((response) => {
       setChats(response.data);
-      //console.log(response.data);
     });
   }, [messages]);
 
@@ -39,7 +39,7 @@ function Chatpage() {
 
   const getMessages = async (id) => {
     const { data } = await axios.get(`api/message/${id}`, config);
-    console.log(data);
+
     setMessages(data);
   };
 
@@ -70,14 +70,6 @@ function Chatpage() {
     messagesEndRef.current?.scrollIntoView({ behavior: 'auto' });
   };
 
-  /*const userslist = chats.map(({ users }) => ({
-    name: user.name,
-  }));
-
-  console.log(userslist);*/
-
-  //console.log(chats);
-
   const usersmapped = chats.map((chat) =>
     chat.users.map((user) => {
       if (userId !== user._id) {
@@ -85,30 +77,6 @@ function Chatpage() {
       }
     })
   );
-
-  // const usersmapped = chats.map((chat) =>
-  //   chat.users.map((user) => {
-  //     return user._id === userId ? 'yes' : user.name;
-  //   })
-  // );
-
-  //const usermapped = usersmapped.map((user) => user);
-
-  console.log(usersmapped);
-
-  // const usermapped = usersmapped[0];
-
-  // const checkid = (age) => {
-  //   return age === userId;
-  // };
-
-  // const filtered = usersmapped.filter(checkid);
-
-  //console.log(filtered);
-  //console.log(usersmapped[0]);
-  //console.log();
-
-  //console.log(usermapped);
 
   return (
     <>
@@ -131,7 +99,6 @@ function Chatpage() {
 
           <div className='sidebar__chats'>
             {chats.map((chat) => {
-              //console.log(chat);
               return (
                 <div
                   className='sidebarChat'
@@ -150,7 +117,8 @@ function Chatpage() {
                       )}
                     </h3>
                     <p>
-                      {chat.latestMessage.content.length > 25
+                      {chat.latestMessage &&
+                      chat.latestMessage.content.length > 25
                         ? chat.latestMessage.content.substring(0, 26) + '...'
                         : chat.latestMessage.content}
                     </p>
