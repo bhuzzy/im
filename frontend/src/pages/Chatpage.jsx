@@ -5,6 +5,10 @@ import SearchIcon from '@mui/icons-material/Search';
 import RateReviewOutlinedIcon from '@mui/icons-material/RateReviewOutlined';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 //import Spinner from '../components/Spinner';
+import io from 'socket.io-client';
+
+const ENDPOINT = 'http://localhost:5000';
+var socket, selectedChatCompare;
 
 function Chatpage() {
   const messagesEndRef = useRef(null);
@@ -24,23 +28,49 @@ function Chatpage() {
   const [text, setText] = useState('');
   const [selectedChat, setSelectedChat] = useState('');
   const [names, setNames] = useState([]);
+  const [socketConnected, setSocketConnected] = useState(false);
 
   const [messages, setMessages] = useState([]);
 
   useEffect(() => {
     axios.get('api/chat/', config).then((response) => {
       setChats(response.data);
+      scrollToBottom();
     });
   }, [messages]);
 
   useEffect(() => {
-    scrollToBottom();
-  }, [messages]);
+    socket = io(ENDPOINT);
+    socket.emit('setup', user);
+    socket.on('connection', () => setSocketConnected(true));
+  }, []);
+
+  useEffect(() => {
+    socket.on('message recieved', (newMessageRecieved) => {
+      if (
+        !selectedChatCompare ||
+        selectedChatCompare !== newMessageRecieved.chat._id
+      ) {
+        // give notification
+      } else {
+        setMessages([...messages, newMessageRecieved]);
+      }
+    });
+  });
+
+  useEffect(() => {
+    getMessages(selectedChat);
+
+    selectedChatCompare = selectedChat;
+    // eslint-disable-next-line
+  }, [selectedChat]);
 
   const getMessages = async (id) => {
+    if (!selectedChat) return;
     const { data } = await axios.get(`api/message/${id}`, config);
 
     setMessages(data);
+    socket.emit('join chat', selectedChat);
   };
 
   const handleSubmit = async (event) => {
@@ -56,6 +86,8 @@ function Chatpage() {
         config
       );
       setText('');
+
+      socket.emit('new message', data);
 
       setMessages([...messages, data]);
     }
@@ -103,7 +135,6 @@ function Chatpage() {
                 <div
                   className='sidebarChat'
                   onClick={() => {
-                    getMessages(chat._id);
                     setSelectedChat(chat._id);
                   }}
                   key={chat._id}
