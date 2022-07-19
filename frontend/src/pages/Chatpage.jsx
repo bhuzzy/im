@@ -53,6 +53,18 @@ function Chatpage() {
     // eslint-disable-next-line
   }, [chatInfo]);
 
+  useEffect(() => {
+    socket.on('message recieved', (newMessageRecieved) => {
+      if (
+        !selectedChatCompare || // if chat is not selected or doesn't match current chat
+        selectedChatCompare._id !== newMessageRecieved.chat._id
+      ) {
+      } else {
+        setMessages([...messages, newMessageRecieved]);
+      }
+    });
+  });
+
   const getMessages = async (id) => {
     if (!selectedChat) return;
     const { data } = await axios.get(`api/message/${id}`, config);
@@ -74,6 +86,8 @@ function Chatpage() {
         config
       );
       setText('');
+
+      socket.emit('new message', data);
 
       setMessages([...messages, data]);
     }
