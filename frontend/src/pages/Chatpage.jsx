@@ -30,8 +30,31 @@ function Chatpage() {
   const [chatInfo, setChatInfo] = useState([]);
   const [names, setNames] = useState([]);
   const [socketConnected, setSocketConnected] = useState(false);
+  const [typing, setTyping] = useState(false);
+  const [istyping, setIsTyping] = useState(false);
 
   const [messages, setMessages] = useState([]);
+
+  const getMessages = async (id) => {
+    if (!selectedChat) return;
+    const { data } = await axios.get(`api/message/${id}`, config);
+
+    setMessages(data);
+    socket.emit('join chat', chatInfo._id);
+  };
+
+  // const boo = () => {
+  //   setSelectedChat('');
+  //   setMessages([]);
+  // };
+
+  useEffect(() => {
+    socket = io(ENDPOINT);
+    socket.emit('setup', user);
+    socket.on('connected', () => setSocketConnected(true));
+    socket.on('typing', () => setIsTyping(true));
+    socket.on('stop typing', () => setIsTyping(false));
+  }, []);
 
   useEffect(() => {
     axios.get('api/chat/', config).then((response) => {
@@ -39,12 +62,6 @@ function Chatpage() {
       scrollToBottom();
     });
   }, [messages]);
-
-  useEffect(() => {
-    socket = io(ENDPOINT);
-    socket.emit('setup', user);
-    socket.on('connection', () => setSocketConnected(true));
-  }, []);
 
   useEffect(() => {
     getMessages(chatInfo._id);
@@ -65,16 +82,9 @@ function Chatpage() {
     });
   });
 
-  const getMessages = async (id) => {
-    if (!selectedChat) return;
-    const { data } = await axios.get(`api/message/${id}`, config);
-
-    setMessages(data);
-    socket.emit('join chat', chatInfo._id);
-  };
-
   const handleSubmit = async (event) => {
     event.preventDefault();
+    socket.emit('stop typing', chatInfo._id);
 
     if (text.trim().length !== 0) {
       const { data } = await axios.post(
@@ -93,9 +103,32 @@ function Chatpage() {
     }
   };
 
-  const boo = () => {
-    setSelectedChat('');
-    setMessages([]);
+  const typingHandler = (e) => {
+    setText(e.target.value);
+    console.log('a');
+
+    // Typing Logic indicator
+    if (!socketConnected) return;
+
+    if (!typing) {
+      setTyping(true);
+      socket.emit('typing', chatInfo._id);
+    }
+    let lastTypingTime = new Date().getTime();
+    var timerLength = 3000;
+
+    setTimeout(() => {
+      var timeNow = new Date().getTime();
+      var timeDiff = timeNow - lastTypingTime;
+      console.log(timeDiff);
+
+      if (timeDiff >= timerLength && typing) {
+        console.log(timeNow);
+        socket.emit('stop typing', chatInfo._id);
+
+        setTyping(false);
+      }
+    }, 8000);
   };
 
   const scrollToBottom = () => {
@@ -104,6 +137,7 @@ function Chatpage() {
 
   return (
     <>
+      {istyping ? <div>Loading...</div> : <></>}
       <div className='app'>
         <div
           className={`sidebar ${selectedChat.trim().length !== 0 && 'hide'}`}
@@ -157,7 +191,7 @@ function Chatpage() {
 
         <div className={`chat ${selectedChat.trim().length === 0 && 'hide'}`}>
           <div className='chat__header'>
-            <ArrowBackIcon onClick={boo} />
+            <ArrowBackIcon />
             <h4>
               To: <span className='chat__name'>Channel name</span>
             </h4>
@@ -180,13 +214,14 @@ function Chatpage() {
             })}
             <span style={{ marginBottom: 0 }} ref={messagesEndRef} />
           </div>
+
           <div className='chat__input'>
             <form>
               <input
                 placeholder='message'
                 type='text'
                 value={text}
-                onChange={(e) => setText(e.target.value)}
+                onChange={typingHandler}
               />
               <button onClick={handleSubmit}>Send Message</button>
             </form>
