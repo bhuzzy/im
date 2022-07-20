@@ -23,13 +23,6 @@ const registerUser = asyncHandler(async (req, res) => {
     res.status(400);
     throw new Error('User already exists');
   }
-  if (pubIdExists) {
-    res.status(400);
-    throw new Error('User already exists');
-  }
-
-  const pubId2 = nanoid();
-  console.log(pubIb2);
 
   // hash password
 
@@ -41,7 +34,6 @@ const registerUser = asyncHandler(async (req, res) => {
     name,
     email,
     pubId,
-    pubId2,
     password: hashedPassword,
   });
 

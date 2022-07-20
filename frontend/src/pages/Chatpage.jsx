@@ -160,36 +160,37 @@ function Chatpage() {
           </div>
 
           <div className='sidebar__chats'>
-            {chats.map((chat) => {
-              return (
-                <div
-                  className='sidebarChat'
-                  onClick={() => {
-                    setSelectedChat(chat._id);
-                    setChatInfo(chat);
-                    console.log(chat);
-                  }}
-                  key={chat._id}
-                >
-                  <Avatar />
+            {chats.length > 0 &&
+              chats.map((chat) => {
+                return (
+                  <div
+                    className='sidebarChat'
+                    onClick={() => {
+                      setSelectedChat(chat._id);
+                      setChatInfo(chat);
+                      console.log(chat);
+                    }}
+                    key={chat._id}
+                  >
+                    <Avatar />
 
-                  <div className='sidebarChat__info'>
-                    <h3>
-                      {chat.users.map(
-                        (user) => user._id !== userId && user.name + ' '
-                      )}
-                    </h3>
-                    <p>
-                      {chat.latestMessage &&
-                      chat.latestMessage.content.length > 25
-                        ? chat.latestMessage.content.substring(0, 26) + '...'
-                        : chat.latestMessage.content}
-                    </p>
-                    <small>{chat.updatedAt.substring(12, 19)}</small>
+                    <div className='sidebarChat__info'>
+                      <h3>
+                        {chat.users.map(
+                          (user) => user._id !== userId && user.name + ' '
+                        )}
+                      </h3>
+                      <p>
+                        {chat.latestMessage &&
+                        chat.latestMessage.content.length > 25
+                          ? chat.latestMessage.content.substring(0, 26) + '...'
+                          : chat.latestMessage.content}
+                      </p>
+                      <small>{chat.updatedAt.substring(12, 19)}</small>
+                    </div>
                   </div>
-                </div>
-              );
-            })}
+                );
+              })}
           </div>
         </div>
 
