@@ -6,6 +6,7 @@ import RateReviewOutlinedIcon from '@mui/icons-material/RateReviewOutlined';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 //import Spinner from '../components/Spinner';
 import io from 'socket.io-client';
+import typingg from '../components/typing.gif';
 
 const ENDPOINT = 'http://localhost:5000';
 var socket, selectedChatCompare;
@@ -64,6 +65,10 @@ function Chatpage() {
   }, [messages]);
 
   useEffect(() => {
+    scrollToBottom();
+  }, [istyping]);
+
+  useEffect(() => {
     getMessages(chatInfo._id);
 
     selectedChatCompare = chatInfo;
@@ -105,7 +110,6 @@ function Chatpage() {
 
   const typingHandler = (e) => {
     setText(e.target.value);
-    console.log('a');
 
     // Typing Logic indicator
     if (!socketConnected) return;
@@ -113,22 +117,23 @@ function Chatpage() {
     if (!typing) {
       setTyping(true);
       socket.emit('typing', chatInfo._id);
+      console.log('a');
     }
     let lastTypingTime = new Date().getTime();
     var timerLength = 3000;
 
     setTimeout(() => {
-      var timeNow = new Date().getTime();
-      var timeDiff = timeNow - lastTypingTime;
+      let timeNow = new Date().getTime();
+      let timeDiff = timeNow - lastTypingTime;
       console.log(timeDiff);
 
-      if (timeDiff >= timerLength && typing) {
+      if (timeDiff >= timerLength) {
         console.log(timeNow);
         socket.emit('stop typing', chatInfo._id);
 
         setTyping(false);
       }
-    }, 8000);
+    }, timerLength);
   };
 
   const scrollToBottom = () => {
@@ -137,7 +142,6 @@ function Chatpage() {
 
   return (
     <>
-      {istyping ? <div>Loading...</div> : <></>}
       <div className='app'>
         <div
           className={`sidebar ${selectedChat.trim().length !== 0 && 'hide'}`}
@@ -212,6 +216,15 @@ function Chatpage() {
                 </div>
               );
             })}
+
+            {istyping ? (
+              <div className='message'>
+                {<img src={typingg} style={{ width: 50, marginLeft: 0 }}></img>}
+              </div>
+            ) : (
+              <></>
+            )}
+
             <span style={{ marginBottom: 0 }} ref={messagesEndRef} />
           </div>
 
