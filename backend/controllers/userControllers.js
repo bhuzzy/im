@@ -115,6 +115,22 @@ const checkPub = asyncHandler(async (req, res) => {
   res.send(pub);
 });
 
+const updateUsername = asyncHandler(async (req, res) => {
+  // const usernamea = await User.findByIdAndUpdate(
+  //   { _id: req.user.id },
+  //   { $set: { email: req.body.username } },
+  //   { upsert: true }
+  // );
+
+  const usernamea = await User.updateOne(
+    { _id: req.user._id },
+    { $set: { username: req.body.username } },
+    { upsert: true }
+  );
+
+  res.send(usernamea);
+});
+
 module.exports = {
   registerUser,
   loginUser,
@@ -122,4 +138,5 @@ module.exports = {
   getUsers,
   findUsers,
   checkPub,
+  updateUsername,
 };

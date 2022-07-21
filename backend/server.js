@@ -13,11 +13,12 @@ const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
-app.get('/', (req, res) => {
-  res.status(201).json({ message: 'welcome to support' });
-});
+// app.get('/', (req, res) => {
+//   res.status(201).json({ message: 'welcome to support' });
+// });
 
 //routes
+app.use('/', require('./routes/rootRoutes'));
 app.use('/api/users', require('./routes/userRoutes'));
 app.use('/api/chat', require('./routes/chatRoutes'));
 app.use('/api/message', require('./routes/messageRoutes'));

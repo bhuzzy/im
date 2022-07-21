@@ -11,6 +11,8 @@ import Tickets from './pages/Tickets';
 import Ticket from './pages/Ticket';
 import Chat from './pages/Chat';
 import Chatpage from './pages/Chatpage';
+import User from './pages/User';
+import Settings from './pages/Settings';
 
 function App() {
   return (
@@ -20,9 +22,13 @@ function App() {
           <Header />
           <Routes>
             <Route path='/' element={<Home />} />
+            <Route path='/:id' element={<User />} />
             <Route path='/login' element={<Login />} />
             <Route path='/chat' element={<Chat />} />
             <Route path='/chatpage' element={<Chatpage />} />
+            <Route path='/settings' element={<PrivateRoute />}>
+              <Route path='/settings' element={<Settings />} />
+            </Route>
 
             <Route path='/register' element={<Register />} />
             <Route path='/new-ticket' element={<PrivateRoute />}>

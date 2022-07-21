@@ -43,7 +43,7 @@ function Ticket() {
   const params = useParams();
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const { ticketId } = params();
+  const { ticketId } = useParams();
 
   useEffect(() => {
     if (isError) {

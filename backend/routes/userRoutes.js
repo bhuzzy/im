@@ -7,6 +7,7 @@ const {
   getUsers,
   findUsers,
   checkPub,
+  updateUsername,
 } = require('../controllers/userControllers');
 
 const { protect } = require('../middleware/authMiddleware');
@@ -17,5 +18,6 @@ router.get('/me', protect, getMe);
 router.get('/chat', protect, getUsers);
 router.get('/:searchWord', findUsers);
 router.get('/:pubId', checkPub);
+router.post('/settings', protect, updateUsername);
 
 module.exports = router;
