@@ -8,6 +8,7 @@ const {
   findUsers,
   checkPub,
   updateUsername,
+  getUser,
 } = require('../controllers/userControllers');
 
 const { protect } = require('../middleware/authMiddleware');
@@ -17,6 +18,7 @@ router.post('/login', loginUser);
 router.get('/me', protect, getMe);
 router.get('/chat', protect, getUsers);
 router.get('/:searchWord', findUsers);
+router.get('/get/:id', getUser);
 router.get('/:pubId', checkPub);
 router.post('/settings', protect, updateUsername);
 

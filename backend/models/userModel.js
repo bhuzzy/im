@@ -21,6 +21,7 @@ const userSchema = mongoose.Schema(
     },
     username: {
       type: String,
+      default: '',
     },
     pic: {
       type: 'String',

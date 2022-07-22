@@ -68,8 +68,20 @@ function Header() {
         {filteredData.length != 0 && (
           <div className='dataResult'>
             {filteredData.slice(0, 15).map((value, key) => {
+              if (value.username.length)
+                return (
+                  <a className='dataItem' href={value.username}>
+                    <p>{value.name} </p>
+                  </a>
+                );
+              if (value.pubId)
+                return (
+                  <a className='dataItem' href={value.pubId}>
+                    <p>{value.name} </p>
+                  </a>
+                );
               return (
-                <a className='dataItem' href={value.name}>
+                <a className='dataItem' href={value._id}>
                   <p>{value.name} </p>
                 </a>
               );

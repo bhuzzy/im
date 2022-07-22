@@ -3,6 +3,7 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
 const User = require('../models/userModel');
+const mongoose = require('mongoose');
 
 const registerUser = asyncHandler(async (req, res) => {
   const { name, email, password, pubId } = req.body;
@@ -96,18 +97,49 @@ const getUsers = asyncHandler(async (req, res) => {
   res.send(users);
 });
 
-// doesn't check if signed in.
+// GET USER WITH USERNAME, PUBID, OR _ID
 
-const findUsers = asyncHandler(async (req, res) => {
-  const keyword = req.params.searchWord
+const getUser = asyncHandler(async (req, res) => {
+  const keyword = req.params.id
     ? {
-        $or: [{ name: { $regex: req.params.searchWord, $options: 'i' } }],
+        $or: [{ username: req.params.id }, { pubId: req.params.id }],
       }
     : {};
 
-  const users = await User.find(keyword);
+  let users = await User.find(keyword);
+
+  if (users.length === 0 && mongoose.Types.ObjectId.isValid(req.params.id)) {
+    try {
+      users = await User.find({ _id: req.params.id });
+    } catch (err) {
+      console.log(err);
+      users = [];
+    }
+  }
 
   res.send(users);
+});
+
+// doesn't check if signed in.
+
+const findUsers = asyncHandler(async (req, res) => {
+  // const keyword = req.params.searchWord
+  //   ? {
+  //       $or: [{ name: { $regex: req.params.searchWord, $options: 'i' } }],
+  //     }
+  //   : {};
+
+  // const users = await User.find(keyword);
+
+  const users = await User.find(
+    {
+      $or: [{ name: { $regex: req.params.searchWord, $options: 'i' } }],
+    },
+    { name: 1, pubId: 1, username: 1 }
+  );
+
+  res.send(users);
+  console.log(users);
 });
 
 const checkPub = asyncHandler(async (req, res) => {
@@ -122,13 +154,13 @@ const updateUsername = asyncHandler(async (req, res) => {
   //   { upsert: true }
   // );
 
-  const usernamea = await User.updateOne(
+  const username = await User.updateOne(
     { _id: req.user._id },
     { $set: { username: req.body.username } },
     { upsert: true }
   );
 
-  res.send(usernamea);
+  res.send(username);
 });
 
 module.exports = {
@@ -139,4 +171,5 @@ module.exports = {
   findUsers,
   checkPub,
   updateUsername,
+  getUser,
 };
