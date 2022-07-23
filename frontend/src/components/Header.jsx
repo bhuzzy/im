@@ -5,7 +5,6 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { logout, reset } from '../features/auth/authSlice';
 import { useState } from 'react';
-import LogoutIcon from '@mui/icons-material/Logout';
 import SearchIcon from '@mui/icons-material/Search';
 import CloseIcon from '@mui/icons-material/Close';
 import axios from 'axios';
@@ -33,8 +32,13 @@ function Header() {
   };
 
   const searchUsers = async (searchWord) => {
-    const { data } = await axios.get(`api/users/${searchWord}`);
-    setFilteredData(data);
+    try {
+      const { data } = await axios.get(`api/users/${searchWord}`);
+
+      setFilteredData(data);
+    } catch (err) {
+      console.log(err);
+    }
   };
 
   const clearInput = () => {
@@ -65,23 +69,23 @@ function Header() {
             )}
           </div>
         </div>
-        {filteredData.length != 0 && (
+        {filteredData.length !== 0 && (
           <div className='dataResult'>
             {filteredData.slice(0, 15).map((value, key) => {
               if (value.username.length)
                 return (
-                  <a className='dataItem' href={value.username}>
+                  <a key={value._id} className='dataItem' href={value.username}>
                     <p>{value.name} </p>
                   </a>
                 );
               if (value.pubId)
                 return (
-                  <a className='dataItem' href={value.pubId}>
+                  <a key={value._id} className='dataItem' href={value.pubId}>
                     <p>{value.name} </p>
                   </a>
                 );
               return (
-                <a className='dataItem' href={value._id}>
+                <a key={value._id} className='dataItem' href={value._id}>
                   <p>{value.name} </p>
                 </a>
               );
@@ -93,7 +97,7 @@ function Header() {
         {user ? (
           <>
             <li>
-              <Link to='chatpage' onClick={clearInput}>
+              <Link to='chat' onClick={clearInput}>
                 <AiOutlineMessage />
               </Link>
             </li>

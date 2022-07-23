@@ -49,8 +49,6 @@ function Chatpage() {
   //   setMessages([]);
   // };
 
-  console.log(chats);
-
   useEffect(() => {
     socket = io(ENDPOINT);
     socket.emit('setup', user);
@@ -119,7 +117,6 @@ function Chatpage() {
     if (!typing) {
       setTyping(true);
       socket.emit('typing', chatInfo._id);
-      console.log('a');
     }
     let lastTypingTime = new Date().getTime();
     var timerLength = 3000;
@@ -127,10 +124,8 @@ function Chatpage() {
     setTimeout(() => {
       let timeNow = new Date().getTime();
       let timeDiff = timeNow - lastTypingTime;
-      console.log(timeDiff);
 
       if (timeDiff >= timerLength) {
-        console.log(timeNow);
         socket.emit('stop typing', chatInfo._id);
 
         setTyping(false);
@@ -170,7 +165,6 @@ function Chatpage() {
                     onClick={() => {
                       setSelectedChat(chat._id);
                       setChatInfo(chat);
-                      console.log(chat);
                     }}
                     key={chat._id}
                   >
@@ -179,7 +173,6 @@ function Chatpage() {
                     <div className='sidebarChat__info'>
                       <h3>
                         {chat.users.map((user) => {
-                          console.log(chat);
                           return user._id
                             ? userId !== user._id
                               ? user.name + ' '

@@ -7,11 +7,14 @@ import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 //import Spinner from '../components/Spinner';
 import io from 'socket.io-client';
 import typingg from '../components/typing.gif';
+import { useLocation } from 'react-router-dom';
 
 const ENDPOINT = 'http://localhost:5000';
 var socket, selectedChatCompare;
 
 function Chatpage() {
+  const location = useLocation();
+
   const messagesEndRef = useRef(null);
   const user = JSON.parse(localStorage.getItem('user'));
 
@@ -36,13 +39,43 @@ function Chatpage() {
 
   const [messages, setMessages] = useState([]);
 
+  const [{ from }, setFrom] = useState(location.state ? location.state : '');
+
   const getMessages = async (id) => {
+    const config = {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    };
+
     if (!selectedChat) return;
     const { data } = await axios.get(`api/message/${id}`, config);
 
     setMessages(data);
     socket.emit('join chat', chatInfo._id);
   };
+
+  const startChat = async (from) => {
+    const config = {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    };
+    try {
+      const { data } = await axios.post('/api/chat/', { userId: from }, config);
+      // if this runs that means promise was fulfilled?
+      console.log(data._id);
+
+      setSelectedChat(data._id);
+
+      setChatInfo(data);
+      setFrom('');
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  from && startChat(from);
 
   // const boo = () => {
   //   setSelectedChat('');
@@ -56,6 +89,8 @@ function Chatpage() {
     socket.on('typing', () => setIsTyping(true));
     socket.on('stop typing', () => setIsTyping(false));
   }, []);
+
+  // reloads chats to show the new message's sent or recieved when message state changes
 
   useEffect(() => {
     axios.get('api/chat/', config).then((response) => {
@@ -117,7 +152,6 @@ function Chatpage() {
     if (!typing) {
       setTyping(true);
       socket.emit('typing', chatInfo._id);
-      console.log('a');
     }
     let lastTypingTime = new Date().getTime();
     var timerLength = 3000;
@@ -125,10 +159,8 @@ function Chatpage() {
     setTimeout(() => {
       let timeNow = new Date().getTime();
       let timeDiff = timeNow - lastTypingTime;
-      console.log(timeDiff);
 
       if (timeDiff >= timerLength) {
-        console.log(timeNow);
         socket.emit('stop typing', chatInfo._id);
 
         setTyping(false);
@@ -168,7 +200,6 @@ function Chatpage() {
                     onClick={() => {
                       setSelectedChat(chat._id);
                       setChatInfo(chat);
-                      console.log(chat);
                     }}
                     key={chat._id}
                   >
@@ -176,15 +207,21 @@ function Chatpage() {
 
                     <div className='sidebarChat__info'>
                       <h3>
-                        {chat.users.map(
-                          (user) => user._id !== userId && user.name + ' '
-                        )}
+                        {chat.users.map((user) => {
+                          return user._id
+                            ? userId !== user._id
+                              ? user.name + ' '
+                              : ''
+                            : 'user deleted';
+                        })}
                       </h3>
                       <p>
-                        {chat.latestMessage &&
-                        chat.latestMessage.content.length > 25
-                          ? chat.latestMessage.content.substring(0, 26) + '...'
-                          : chat.latestMessage.content}
+                        {chat.latestMessage
+                          ? chat.latestMessage.content.length > 25
+                            ? chat.latestMessage.content.substring(0, 26) +
+                              '...'
+                            : chat.latestMessage.content
+                          : ''}
                       </p>
                       <small>{chat.updatedAt.substring(12, 19)}</small>
                     </div>
@@ -198,7 +235,18 @@ function Chatpage() {
           <div className='chat__header'>
             <ArrowBackIcon />
             <h4>
-              To: <span className='chat__name'>Channel name</span>
+              To:{' '}
+              <span className='chat__name'>
+                {chatInfo.users
+                  ? chatInfo.users.map((user) => {
+                      return user._id
+                        ? userId !== user._id
+                          ? user.name + ' '
+                          : ''
+                        : 'user deleted';
+                    })
+                  : 'Channel info'}
+              </span>
             </h4>
             <strong>Details</strong>
           </div>

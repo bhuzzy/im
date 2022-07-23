@@ -139,7 +139,6 @@ const findUsers = asyncHandler(async (req, res) => {
   );
 
   res.send(users);
-  console.log(users);
 });
 
 const checkPub = asyncHandler(async (req, res) => {

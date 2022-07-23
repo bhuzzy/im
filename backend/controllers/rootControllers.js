@@ -9,6 +9,8 @@ const getUser = asyncHandler(async (req, res) => {
       }
     : {};
 
+  console.log(keyword);
+
   const users = await User.find(keyword);
   res.send(users);
 });
