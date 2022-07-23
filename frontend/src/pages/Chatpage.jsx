@@ -49,6 +49,8 @@ function Chatpage() {
   //   setMessages([]);
   // };
 
+  console.log(chats);
+
   useEffect(() => {
     socket = io(ENDPOINT);
     socket.emit('setup', user);
@@ -176,15 +178,22 @@ function Chatpage() {
 
                     <div className='sidebarChat__info'>
                       <h3>
-                        {chat.users.map(
-                          (user) => user._id !== userId && user.name + ' '
-                        )}
+                        {chat.users.map((user) => {
+                          console.log(chat);
+                          return user._id
+                            ? userId !== user._id
+                              ? user.name + ' '
+                              : ''
+                            : 'user deleted';
+                        })}
                       </h3>
                       <p>
-                        {chat.latestMessage &&
-                        chat.latestMessage.content.length > 25
-                          ? chat.latestMessage.content.substring(0, 26) + '...'
-                          : chat.latestMessage.content}
+                        {chat.latestMessage
+                          ? chat.latestMessage.content.length > 25
+                            ? chat.latestMessage.content.substring(0, 26) +
+                              '...'
+                            : chat.latestMessage.content
+                          : ''}
                       </p>
                       <small>{chat.updatedAt.substring(12, 19)}</small>
                     </div>
@@ -204,18 +213,20 @@ function Chatpage() {
           </div>
           <div className='chat__messages'>
             {messages.map((message) => {
-              return (
-                <div
-                  className={`message ${
-                    userId === message.sender._id && 'message__sender'
-                  }`}
-                  key={message._id}
-                >
-                  <Avatar className='message__photo' />
-                  <p>{message.content}</p>
-                  <small>{message.updatedAt}</small>
-                </div>
-              );
+              if (message.sender !== null) {
+                return (
+                  <div
+                    className={`message ${
+                      userId === message.sender._id && 'message__sender'
+                    }`}
+                    key={message._id}
+                  >
+                    <Avatar className='message__photo' />
+                    <p>{message.content}</p>
+                    <small>{message.updatedAt}</small>
+                  </div>
+                );
+              }
             })}
 
             {istyping ? (

@@ -2,8 +2,21 @@ import axios from 'axios';
 import React from 'react';
 import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import Spinner from '../components/Spinner';
+import '../css/user.css';
 
 const User = () => {
+  const user = JSON.parse(localStorage.getItem('user'));
+
+  const userId = user._id;
+
+  const token = user.token;
+
+  const config = {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  };
   const { id } = useParams();
 
   const [info, setInfo] = useState([]);
@@ -20,13 +33,26 @@ const User = () => {
     }
   };
 
+  const startChat = async (userId) => {
+    const config = {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    };
+    try {
+      console.log(userId);
+      const { data } = await axios.post(
+        '/api/chat/',
+        { userId: userId },
+        config
+      );
+      console.log(data);
+    } catch {}
+  };
+
   useEffect(() => {
     getUser(id);
   }, []);
-
-  // if (loading) {
-  //   return <div>loading</div>;
-  // }
 
   if (!loading && info.length === 0) {
     return (
@@ -37,12 +63,29 @@ const User = () => {
   }
   return (
     <>
-      {loading && <h3>loading</h3>}
-      <h2>
-        {info.map((i) => {
-          return i.name;
-        })}
-      </h2>
+      {loading && <Spinner />}
+
+      {info.map((i) => {
+        return (
+          <div className='profile' key={i._id}>
+            <img src={i.pic}></img>
+            <h2>{i.name}</h2>
+            <h3>{i.username && i.username}</h3>
+            <button
+              onClick={() => {
+                startChat(i._id);
+              }}
+            >
+              message $5
+            </button>{' '}
+            <br></br>
+            <button>unlock premium $15</button>
+            <br></br>
+            <button>follow</button>
+            <br></br>
+          </div>
+        );
+      })}
     </>
   );
 };
